@@ -1211,7 +1211,8 @@ MonoBehaviour:
   _alarm: {fileID: 303340259}
   _currentVolume: 1
   _targetVolume: 0.1
-  _speedOfChange: 20
+  _speedOfChange: 300
+  _duration: 3
 --- !u!1 &336372219
 GameObject:
   m_ObjectHideFlags: 0

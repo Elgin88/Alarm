@@ -9,9 +9,9 @@ public class Siren : MonoBehaviour
     [SerializeField] private float _currentVolume;
     [SerializeField] private float _targetVolume;
     [SerializeField] private float _speedOfChange;
+    [SerializeField] private float _duration;
 
-    private float _timeAfterLastChange;
-    private bool _isNeedChangeVolume = false;
+    private float _timeToChange;
 
     public void OnEnable()
     {
@@ -21,22 +21,29 @@ public class Siren : MonoBehaviour
     public void OnDisable()
     {
         _checkPoint.ThiefCrossPoint -= EnableAlarm;
-    }
-
-    public void FixedUpdate()
-    {
-        if (_isNeedChangeVolume == true)
-        {
-            _alarm.volume = Mathf.MoveTowards(_currentVolume, _targetVolume, _speedOfChange * _timeAfterLastChange * Time.deltaTime);
-            _timeAfterLastChange += Time.deltaTime;
-        }
-    }
+    }    
 
     private void EnableAlarm()
-    {
+    {       
         _alarm.Play();
-        _isNeedChangeVolume = true;
-        _currentVolume = 1;
-        _timeAfterLastChange = 0;
+        StartCoroutine(ChangeVolume());
+    }
+
+    private IEnumerator ChangeVolume()
+    {
+        while (_timeToChange < _duration)
+        {
+            _alarm.volume = Mathf.MoveTowards(_currentVolume, _targetVolume, _speedOfChange * Time.deltaTime * _timeToChange);
+            _timeToChange += Time.deltaTime;           
+
+            yield return null;
+        }
+
+        Debug.Log("Here");
+
+        _timeToChange = 0;
+        _alarm.Stop();
+        _alarm.volume = _currentVolume;
+        StopCoroutine(ChangeVolume());
     }
 }
